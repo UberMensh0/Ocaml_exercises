@@ -72,6 +72,63 @@ else false;;
 is_palindrome ["a"; "b"];;
 
 
+(* N7 Flatten a nested list structure *)
+
+
+type 'a node =
+  | One of 'a 
+  | Many of 'a node list
+
+  let list = [One "a"; Many [One "b"; Many [One "c" ;One "d"]; One "e"]]
+
+
+  let rec flatten_node list = 
+    match list with
+    | One x -> [x]
+    | Many nodes -> flatten nodes
+
+and flatten list = 
+  match list with
+  | [] -> []
+  | x :: xs -> flatten_node x @ flatten xs
 
 
 
+
+
+(* N8 Eliminate consecutive duplicates of list elements. *)
+
+  let rec compress list = 
+    match list with
+    | [] -> []
+    | [x] -> [x]
+    | x :: (y :: _ as rest) -> if x = y
+      then compress rest
+  else x  :: compress rest
+
+
+
+  (* N9 Pack consecutive duplicates of list elements into sublists. *)
+
+  let pack list =
+    let rec aux current acc rest =
+      (* current is used to accumulate elements of the same value consecutively *)
+      (* acc is used to accumulate sublists of consecutive elements *)
+      (* rest is used to accumulate remaining part of list *)
+      match rest with
+      | [] -> []
+      | [x] -> (x :: current) :: acc
+      | x :: (y :: _ as rest) ->
+          (* x and y are the first two elements at this moment *)
+          (* rest is the remaining part of the list *)
+          if x = y then
+            aux (x :: current) acc rest
+          else
+            aux [] ((x :: current) :: acc) rest
+    in
+    List.rev (aux [] [] list);;
+  
+  
+  
+
+pack ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "d"; "e"; "e"; "e"; "e"];;
